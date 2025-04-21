@@ -4,10 +4,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.relative_locator import locate_with
 
-driver = webdriver.Chrome()
-url = "https://www.durhamnc.gov/AgendaCenter/City-Council-4"
+from config import BASE_URL
 
-def get_next_year():
+def get_next_year(driver):
   current_year = driver.find_element(By.CLASS_NAME, 'current')
 
   next_year = driver.find_element(locate_with(By.TAG_NAME, 'a').to_right_of(current_year))
@@ -19,7 +18,7 @@ def get_next_year():
   next_year.click()
   return True
 
-def get_links(link_list):
+def get_links(driver, link_list):
   wait = WebDriverWait(driver, 10)
 
   try:
@@ -31,21 +30,18 @@ def get_links(link_list):
   
   return link_list
 
-def scrape(url):
+def get_minutes_pdfs(url):
+  driver = webdriver.Chrome()
   driver.get(url)
   links = list()
 
-  links = get_links(links)
+  links = get_links(driver, links)
 
-  while get_next_year():
-    links.append(get_links(links))
+  # while get_next_year(driver):
+  #   links.append(get_links(driver, links))
+
+  driver.quit()
 
   return links
 
-agenda_links = scrape(url)
-
-print(agenda_links)
-
-
-# Close the browser window
-driver.quit()
+# print(get_minutes_pdfs(BASE_URL))
