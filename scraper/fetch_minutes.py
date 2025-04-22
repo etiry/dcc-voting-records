@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.relative_locator import locate_with
 
 from config import BASE_URL
+from utils.utils import start_headless_driver
 
 def get_next_year(driver):
   current_year = driver.find_element(By.CLASS_NAME, 'current')
@@ -18,27 +19,40 @@ def get_next_year(driver):
   next_year.click()
   return True
 
-def get_links(driver, link_list):
-  wait = WebDriverWait(driver, 10)
+def get_regular_meeting_links(driver, link_list):
+    wait = WebDriverWait(driver, 10)
 
-  try:
-    minutes = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a[href*="/AgendaCenter/ViewFile/Minutes/"]')))
-    for doc in minutes:
-      link_list.append(doc.get_attribute('href'))
-  except:
-    pass
-  
-  return link_list
+    try:
+        meetings = wait.until(EC.presence_of_all_elements_located(
+            (By.CSS_SELECTOR, 'tr.catAgendaRow')))
+
+        for meeting in meetings:
+            # Get the meeting title
+            title_elem = meeting.find_element(By.CSS_SELECTOR, 'td p a')
+            title = title_elem.text.strip()
+
+            # Filter only regular City Council Meetings
+            if "City Council Meeting" in title and "Work Session" not in title:
+                try:
+                    minutes_link = meeting.find_element(By.CSS_SELECTOR, 'td.minutes a')
+                    link_list.append(minutes_link.get_attribute("href"))
+                except:
+                    # If there's no Minutes link, skip
+                    continue
+    except:
+        pass
+
+    return link_list
 
 def get_minutes_pdfs(url):
-  driver = webdriver.Chrome()
+  driver = start_headless_driver()
   driver.get(url)
   links = list()
 
-  links = get_links(driver, links)
+  links = get_regular_meeting_links(driver, links)
 
-  # while get_next_year(driver):
-  #   links.append(get_links(driver, links))
+  while get_next_year(driver):
+    links.extend(get_regular_meeting_links(driver, links))
 
   driver.quit()
 
