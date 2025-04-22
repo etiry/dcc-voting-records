@@ -15,7 +15,7 @@ Motion = [
 ]
 
 Vote = [
-  SchemaField("vote_id", "STRING", mode="REQUIRED"),
+  SchemaField("id", "STRING", mode="REQUIRED"),
   SchemaField("motion_id", "STRING", mode="REQUIRED"),
   SchemaField("vote", "STRING", mode="REQUIRED"),
   SchemaField("member", "STRING", mode="REQUIRED"),

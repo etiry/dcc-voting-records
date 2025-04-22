@@ -10,6 +10,21 @@ from config import GOOGLE_SERVICE_ACCOUNT
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_SERVICE_ACCOUNT
 
+def get_existing(
+    client: bigquery.Client,
+    table_id: str
+) -> List[str]:
+    query = f"""
+        SELECT DISTINCT id
+        FROM `{table_id}`
+    """
+    
+    query_job = client.query(query)
+    result = query_job.result()
+    existing_ids = [row.id for row in result]
+    
+    return existing_ids
+
 def create_table_if_not_exists(
     client: bigquery.Client,
     project_id: str,
@@ -52,13 +67,18 @@ def load_to_bigquery(
         schema: Optional list of bigquery.SchemaField objects.
         write_disposition: 'WRITE_APPEND', 'WRITE_TRUNCATE', or 'WRITE_EMPTY'.
     """
-    if not data:
-        print("No data to load.")
-        return
-
     client = bigquery.Client(project=project_id)
 
     create_table_if_not_exists(client, project_id, table_id, schema)
+
+    existing_ids = get_existing(client, table_id)
+
+    new_data = [
+        row for row in data if row["id"] not in existing_ids
+    ]
+    if not new_data:
+        print("No new data to load.")
+        return
 
     job_config = LoadJobConfig(
         write_disposition=write_disposition,
@@ -66,7 +86,7 @@ def load_to_bigquery(
         source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
     )
 
-    json_data = "\n".join(json.dumps(row) for row in data)
+    json_data = "\n".join(json.dumps(row) for row in new_data)
     json_bytes = io.BytesIO(json_data.encode("utf-8"))
 
     job = client.load_table_from_file(

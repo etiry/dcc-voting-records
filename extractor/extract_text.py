@@ -56,7 +56,7 @@ def parse_votes(motion_text: str, motion_id: str, meeting_date: datetime):
         ayes_members = split_vote_list(ayes_match.group(1))
         for name in ayes_members:
             if name.lower() != "none":
-                votes.append({"vote_id": generate_vote_id(motion_id, name, meeting_date), "motion_id": motion_id, "vote": "Aye", "member": name, "created_at": datetime.now().isoformat()})
+                votes.append({"id": generate_vote_id(motion_id, name, meeting_date), "motion_id": motion_id, "vote": "Aye", "member": name, "created_at": datetime.now().isoformat()})
 
     # Extract Noes
     noes_match = re.search(noes_pattern, motion_text)
@@ -64,7 +64,7 @@ def parse_votes(motion_text: str, motion_id: str, meeting_date: datetime):
         noes_members = split_vote_list(noes_match.group(1))
         for name in noes_members:
             if name.lower() != "none":
-                votes.append({"vote_id": generate_vote_id(motion_id, name, meeting_date), "motion_id": motion_id, "vote": "No", "member": name, "created_at": datetime.now().isoformat()})
+                votes.append({"id": generate_vote_id(motion_id, name, meeting_date), "motion_id": motion_id, "vote": "No", "member": name, "created_at": datetime.now().isoformat()})
 
     # Extract Absent
     absent_match = re.search(absent_pattern, motion_text)
@@ -72,7 +72,7 @@ def parse_votes(motion_text: str, motion_id: str, meeting_date: datetime):
         absent_members = split_vote_list(absent_match.group(1))
         for name in absent_members:
             if name.lower() != "none":
-                votes.append({"vote_id": generate_vote_id(motion_id, name, meeting_date), "motion_id": motion_id, "vote": "Absent", "member": name, "created_at": datetime.now().isoformat()})
+                votes.append({"id": generate_vote_id(motion_id, name, meeting_date), "motion_id": motion_id, "vote": "Absent", "member": name, "created_at": datetime.now().isoformat()})
 
     return votes
 
