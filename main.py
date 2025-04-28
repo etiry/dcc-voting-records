@@ -2,11 +2,11 @@ from scraper.fetch_minutes import get_minutes_pdfs
 from extractor.extract_text import extract_contents
 from loader.load_data import load_to_bigquery
 from loader.schema import Subject, Motion, Vote
-from config import BASE_URL, PROJECT_ID, SUBJECT_TABLE_ID, MOTION_TABLE_ID, VOTE_TABLE_ID
+from config import PROJECT_ID, SUBJECT_TABLE_ID, MOTION_TABLE_ID, VOTE_TABLE_ID
 
 def run_pipeline(request):
     try:
-      for url in get_minutes_pdfs(BASE_URL):
+      for url in get_minutes_pdfs():
           print(f'Extracting {url}...')
           extracted_text = extract_contents(url)
           print(f'Uploading to BigQuery...')
