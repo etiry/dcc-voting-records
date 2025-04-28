@@ -1,25 +1,20 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.relative_locator import locate_with
 
-from config import BASE_URL
+from config import BASE_URL, FIRST_YEAR, LAST_YEAR
 from utils.utils import start_headless_driver
 
-def get_next_year(driver):
-  current_year = driver.find_element(By.CLASS_NAME, 'current')
+def generate_urls(first_year, last_year):
+    urls = []
+    for year in range(first_year, last_year + 1):
+        url = f"{BASE_URL}?term=&CIDs=4,&startDate=01/01/{year}&endDate=12/31/{year}&dateRange=&dateSelector="
+        urls.append(url)
+    return urls
 
-  next_year = driver.find_element(locate_with(By.TAG_NAME, 'a').to_right_of(current_year))
-
-  if next_year.text == 'View More':
-    # popout = driver.find_element(By.CLASS_NAME, 'popoutBtm')
-    return False
-  
-  next_year.click()
-  return True
-
-def get_regular_meeting_links(driver, link_list):
+def get_regular_meeting_links(driver, url, link_list):
+    driver.get(url)
     wait = WebDriverWait(driver, 10)
 
     try:
@@ -44,18 +39,16 @@ def get_regular_meeting_links(driver, link_list):
 
     return link_list
 
-def get_minutes_pdfs(url):
+def get_minutes_pdfs():
+  urls = generate_urls(FIRST_YEAR, LAST_YEAR)
   driver = start_headless_driver()
-  driver.get(url)
   links = list()
 
-  links = get_regular_meeting_links(driver, links)
-
-  while get_next_year(driver):
-    links.extend(get_regular_meeting_links(driver, links))
+  for url in urls:
+    links.extend(get_regular_meeting_links(driver, url, links))
 
   driver.quit()
 
   return links
 
-# print(get_minutes_pdfs(BASE_URL))
+print(get_minutes_pdfs())

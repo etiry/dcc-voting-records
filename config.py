@@ -1,4 +1,6 @@
-BASE_URL = "https://www.durhamnc.gov/AgendaCenter/City-Council-4"
+BASE_URL = "https://www.durhamnc.gov/AgendaCenter/Search/"
+FIRST_YEAR = 2013
+LAST_YEAR = 2025
 GOOGLE_SERVICE_ACCOUNT = "durham-city-council-f476f12b4cac.json"
 PROJECT_ID = "durham-city-council"
 DATASET_ID = "minutes"

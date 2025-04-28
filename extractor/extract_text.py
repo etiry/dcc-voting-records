@@ -168,6 +168,3 @@ def extract_contents(url):
   data = parse_minutes(lines)
 
   return data
-
-
-# print([vote for vote in extract_contents("https://www.durhamnc.gov/AgendaCenter/ViewFile/Minutes/_01212025-2971")['votes'] if vote['member'] == ''])
