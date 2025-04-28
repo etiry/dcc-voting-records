@@ -6,9 +6,6 @@ import json
 import os
 from typing import List, Dict, Optional
 
-from config import GOOGLE_SERVICE_ACCOUNT
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_SERVICE_ACCOUNT
 
 def get_existing(
     client: bigquery.Client,
