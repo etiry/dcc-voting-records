@@ -106,17 +106,13 @@ def parse_minutes(lines: List[str]):
                     break
                 i += 1
 
-            # Join the all caps lines as the subject title
             subject_text = " ".join(subject_lines)
-            # # Check for PR # pattern in the text
-            # pr_match = re.search(r"PR #(\d+)", subject_text)
-            # if pr_match:
-            #     pr_id = int(pr_match.group(1))  # Extract PR #
+            clean_subject_text = re.sub(r' \([^()]*\)$', '', subject_text).strip()
             subject_id = generate_subject_id(subject_text)
 
             current_subject = {
-                "id": subject_id, # Include PR # as ID
-                "title": subject_text,
+                "id": subject_id,
+                "title": clean_subject_text,
                 "created_at": datetime.now().isoformat()
             }
             subjects.append(current_subject)
