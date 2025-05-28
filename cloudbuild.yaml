@@ -4,7 +4,7 @@ steps:
     args:
       - run
       - deploy
-      - run_pipeline
+      - run-pipeline
       - --source=.
       - --region=us-central1
       - --platform=managed
